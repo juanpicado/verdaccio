@@ -13,3 +13,7 @@ node_modules
 .jscsrc
 .jshintrc
 jsconfig.json
+
+
+# Webstorm
+.idea
