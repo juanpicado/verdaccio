@@ -15,12 +15,12 @@ Search.prototype.query = function(q) {
   return this.index.search(q)
 }
 
-Search.prototype.add = function(package) {
+Search.prototype.add = function(pgk) {
   this.index.add({
-    id:           package.name,
-    name:         package.name,
-    description:  package.description,
-    author:       package._npmUser ? package._npmUser.name : '???',
+    id:           pgk.name,
+    name:         pgk.name,
+    description:  pgk.description,
+    author:       pgk._npmUser ? pgk._npmUser.name : '???',
   })
 },
 

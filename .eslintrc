@@ -11,6 +11,8 @@
 
 env:
   node: true
+  browser: true
+  es6: true
 
 rules:
   # useful to have in node.js,

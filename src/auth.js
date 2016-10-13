@@ -53,8 +53,8 @@ function Auth(config) {
   })
 
   function allow_action(action) {
-    return function(user, package, cb) {
-      var ok = package[action].reduce(function(prev, curr) {
+    return function(user, pgk, cb) {
+      var ok = pgk[action].reduce(function(prev, curr) {
         if (user.groups.indexOf(curr) !== -1) return true
         return prev
       }, false)
@@ -62,9 +62,9 @@ function Auth(config) {
       if (ok) return cb(null, true)
 
       if (user.name) {
-        cb( Error[403]('user ' + user.name + ' is not allowed to ' + action + ' package ' + package.name) )
+        cb( Error[403]('user ' + user.name + ' is not allowed to ' + action + ' package ' + pgk.name) )
       } else {
-        cb( Error[403]('unregistered users are not allowed to ' + action + ' package ' + package.name) )
+        cb( Error[403]('unregistered users are not allowed to ' + action + ' package ' + pgk.name) )
       }
     }
   }
@@ -128,7 +128,7 @@ Auth.prototype.add_user = function(user, password, cb) {
 
 Auth.prototype.allow_access = function(package_name, user, callback) {
   var plugins = this.plugins.slice(0)
-  var package = Object.assign({ name: package_name },
+  var pgk = Object.assign({ name: package_name },
                               this.config.get_package_spec(package_name))
 
   ;(function next() {
@@ -138,7 +138,7 @@ Auth.prototype.allow_access = function(package_name, user, callback) {
       return next()
     }
 
-    p.allow_access(user, package, function(err, ok) {
+    p.allow_access(user, pgk, function(err, ok) {
       if (err) return callback(err)
       if (ok) return callback(null, ok)
       next() // cb(null, false) causes next plugin to roll
@@ -148,7 +148,7 @@ Auth.prototype.allow_access = function(package_name, user, callback) {
 
 Auth.prototype.allow_publish = function(package_name, user, callback) {
   var plugins = this.plugins.slice(0)
-  var package = Object.assign({ name: package_name },
+  var pgk = Object.assign({ name: package_name },
                               this.config.get_package_spec(package_name))
 
   ;(function next() {
@@ -158,7 +158,7 @@ Auth.prototype.allow_publish = function(package_name, user, callback) {
       return next()
     }
 
-    p.allow_publish(user, package, function(err, ok) {
+    p.allow_publish(user, pgk, function(err, ok) {
       if (err) return callback(err)
       if (ok) return callback(null, ok)
       next() // cb(null, false) causes next plugin to roll

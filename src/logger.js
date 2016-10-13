@@ -1,7 +1,8 @@
-var Logger = require('bunyan')
-var Error  = require('http-errors')
-var Stream = require('stream')
-var Utils  = require('./utils')
+const Logger = require('bunyan');
+const Error  = require('http-errors');
+const Stream = require('stream');
+const Utils  = require('./utils');
+const chalk = require('chalk');
 
 function getlvl(x) {
   switch(true) {
@@ -85,16 +86,16 @@ module.exports.setup = function(logs) {
 
 // level to color
 var levels = {
-  fatal : 31,
-  error : 31,
-  warn  : 33,
-  http  : 35,
-  info  : 36,
-  debug : 90,
-  trace : 90,
+  fatal : chalk.bold.red,
+  error : chalk.red,
+  warn  : chalk.yellow,
+  http  : chalk.magenta,
+  info  : chalk.blue,
+  debug : chalk.green,
+  trace : chalk.gray,
 }
 
-var max = 0
+var max = 0;
 for (var l in levels) {
   max = Math.max(max, l.length)
 }
@@ -105,10 +106,10 @@ function pad(str) {
 }
 
 var subsystems = [{
-  in      : '\033[32m<--\033[39m',
-  out     : '\033[33m-->\033[39m',
-  fs      : '\033[90m-=-\033[39m',
-  default : '\033[34m---\033[39m',
+  in      : chalk.green('<--'),
+  out     : chalk.yellow('-->'),
+  fs      : chalk.gray('-=-'),
+  default : chalk.blue('---'),
 }, {
   in      : '<--',
   out     : '-->',
@@ -139,9 +140,9 @@ function print(type, msg, obj, colors) {
       if (!colors || str.includes('\n')) {
         return str
       } else if (is_error) {
-        return '\033[31m' + str + '\033[39m'
+        return chalk.red(str);
       } else {
-        return '\033[32m' + str + '\033[39m'
+        return chalk.green(str);
       }
     } else {
       return require('util').inspect(str, null, null, colors)
@@ -150,7 +151,8 @@ function print(type, msg, obj, colors) {
 
   var sub = subsystems[colors ? 0 : 1][obj.sub] || subsystems[+!colors].default
   if (colors) {
-    return ' \033[' + levels[type] + 'm' + (pad(type)) + '\033[39m ' + sub + ' ' + finalmsg
+    // FIXME: fix levels
+    //return ' \033[' + levels[type] + 'm' + (pad(type)) + '\033[39m ' + sub + ' ' + finalmsg
   } else {
     return ' ' + (pad(type)) + ' ' + sub + ' ' + finalmsg
   }

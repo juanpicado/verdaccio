@@ -653,18 +653,18 @@ Storage.prototype._write_package = function(name, json, callback) {
   storage.write_json(info_file, json, callback)
 }
 
-Storage.prototype.storage = function(package) {
-  var path = this.config.get_package_spec(package).storage
+Storage.prototype.storage = function(pgk) {
+  var path = this.config.get_package_spec(pgk).storage
   if (path == null) path = this.config.storage
   if (path == null || path === false) {
-    this.logger.debug( { name: package }
+    this.logger.debug( { name: pgk }
                      , 'this package has no storage defined: @{name}' )
     return null
   }
   return Path_Wrapper(
     Path.join(
       Path.resolve(Path.dirname(this.config.self_path || ''), path),
-      package
+      pgk
     )
   )
 }

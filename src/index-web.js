@@ -6,6 +6,7 @@ var fs            = require('fs')
 var Handlebars    = require('handlebars')
 var renderReadme  = require('render-readme')
 var Search        = require('./search')
+var path          = require('path');
 var Middleware    = require('./middleware')
 var match         = Middleware.match
 var validate_name = Middleware.validate_name
@@ -32,14 +33,13 @@ module.exports = function(config, auth, storage) {
   })
 
   Search.configureStorage(storage)
-
-  Handlebars.registerPartial('entry', fs.readFileSync(require.resolve('./GUI/entry.hbs'), 'utf8'))
+  Handlebars.registerPartial('entry', fs.readFileSync(require.resolve(path.join(process.cwd(), '/GUI/entry.hbs')), 'utf8'))
 
   if(config.web && config.web.template) {
     var template = Handlebars.compile(fs.readFileSync(config.web.template, 'utf8'));
   }
   else {
-    var template = Handlebars.compile(fs.readFileSync(require.resolve('./GUI/index.hbs'), 'utf8'))
+    var template = Handlebars.compile(fs.readFileSync(require.resolve(path.join(process.cwd(), './GUI/index.hbs')), 'utf8'))
   }
   app.get('/', function(req, res, next) {
     var base = config.url_prefix
@@ -49,8 +49,8 @@ module.exports = function(config, auth, storage) {
 
     storage.get_local(function(err, packages) {
       if (err) throw err // that function shouldn't produce any
-      async.filterSeries(packages, function(package, cb) {
-        auth.allow_access(package.name, req.remote_user, function(err, allowed) {
+      async.filterSeries(packages, function(pgk, cb) {
+        auth.allow_access(pgk.name, req.remote_user, function(err, allowed) {
           setImmediate(function () {
             if (err) {
               cb(null, false);
@@ -82,7 +82,7 @@ module.exports = function(config, auth, storage) {
 
   // Static
   app.get('/-/static/:filename', function(req, res, next) {
-    var file = __dirname + '/static/' + req.params.filename
+    var file = path.join(process.cwd(),  '/static/', req.params.filename)
     res.sendFile(file, function(err) {
       if (!err) return
       if (err.status === 404) {
@@ -96,7 +96,7 @@ module.exports = function(config, auth, storage) {
   app.get('/-/logo', function(req, res, next) {
     res.sendFile( config.web && config.web.logo
                 ? config.web.logo
-                : __dirname + '/static/logo-sm.png' )
+                : path.join(process.cwd(),  '/static/logo-sm.png' ))
   })
 
   app.post('/-/login', function(req, res, next) {

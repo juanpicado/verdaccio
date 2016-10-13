@@ -18,6 +18,7 @@ function unlock_file(name, cb) {
   locker.unlockFile(name, cb)
 }
 
+
 function parse_htpasswd(input) {
   var result = {}
   input.split('\n').forEach(function(line) {

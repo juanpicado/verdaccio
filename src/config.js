@@ -145,16 +145,16 @@ function Config(config) {
   return self
 }
 
-Config.prototype.can_proxy_to = function(package, uplink) {
-  return (this.get_package_spec(package).proxy || []).reduce(function(prev, curr) {
+Config.prototype.can_proxy_to = function(pgk, uplink) {
+  return (this.get_package_spec(pgk).proxy || []).reduce(function(prev, curr) {
     if (uplink === curr) return true
     return prev
   }, false)
 }
 
-Config.prototype.get_package_spec = function(package) {
+Config.prototype.get_package_spec = function(pgk) {
   for (var i in this.packages) {
-    if (minimatch.makeRe(i).exec(package)) {
+    if (minimatch.makeRe(i).exec(pgk)) {
       return this.packages[i]
     }
   }
