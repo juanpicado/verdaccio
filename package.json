@@ -74,8 +74,11 @@
   ],
   "scripts": {
     "compile": "babel src --out-dir lib",
+    "babel": "babel-node src/cli.js",
+    "babel:watch": "nodemon src/cli.js --exec babel-node",
+    "babel:debug": "babel-node --debug-brk=8010 src/cli.js",
     "test": "npm run lint && mocha ./test/functional ./test/unit",
-    "test-travis": "eslint . && mocha -R spec ./test/functional ./test/unit",
+    "test-travis": "npm run lint && mocha -R spec ./test/functional ./test/unit",
     "test-only": "mocha ./test/functional ./test/unit",
     "lint": "eslint src/**"
   },
